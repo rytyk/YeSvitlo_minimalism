@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">YeSvitlo</string>
+    <string name="btn_check">Перевірити</string>
+    <string name="tv_waiting">Чекаю...</string>
+    <string name="status_loading">Завантаження...</string>
+    <string name="status_not_found">Публікацію не знайдено</string>
+    <string name="status_no_text">Останній пост не містить тексту</string>
+    <string name="status_error">Щось не працює</string>
+</resources>

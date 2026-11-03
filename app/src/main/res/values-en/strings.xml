@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">YeSvitlo</string>
+    <string name="btn_check">Check</string>
+    <string name="tv_waiting">Waiting...</string>
+    <string name="status_loading">Loading...</string>
+    <string name="status_not_found">Post not found</string>
+    <string name="status_no_text">Latest post has no text</string>
+    <string name="status_error">Something went wrong</string>
+</resources>
