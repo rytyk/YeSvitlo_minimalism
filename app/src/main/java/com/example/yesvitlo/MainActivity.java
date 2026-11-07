@@ -16,11 +16,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Evaluator;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class MainActivity extends AppCompatActivity {
 
     Button btnCheck;
-    TextView tvResult;
+    TextView tvResult, tvDate;
     String channelURL = "https://t.me/s/cek_info";
 
     @Override
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         });
         btnCheck = findViewById(R.id.btnCheck);
         tvResult = findViewById(R.id.tvResult);
+        tvDate = findViewById(R.id.tvDate);
 
         btnCheck.setOnClickListener(v -> checkTg());
     }
@@ -45,20 +50,34 @@ public class MainActivity extends AppCompatActivity {
            try{
                Document doc = Jsoup.connect(channelURL).userAgent("Mozilla/5.0").timeout(15000).get();
                Elements posts = doc.select(".tgme_widget_message");
+
                String result = getString(R.string.status_not_found);
+               String dateTime = "дату не знайдено";
                if (!posts.isEmpty()){
                    Element lastPost = posts.last();
                    Element textElement = lastPost.selectFirst(".tgme_widget_message_text");
+                   Element timeElement = lastPost.selectFirst(".tgme_widget_message_date time");
                    if (textElement != null){
                        result = textElement.text();
                    }else{
                        result = getString(R.string.status_no_text);
+                   }if(timeElement != null){
+                       dateTime = timeElement.attr("datetime");
+                       SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US);
+                       Date date = inputFormat.parse(dateTime);
+                       SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault());
+                       dateTime = outputFormat.format(date);
+                   }else{
+                       dateTime = "Не вдалось отримати дату";
                    }
 
                }
                String finalResult = result;
+               String finalDate = dateTime;
                runOnUiThread(() -> tvResult.setText(finalResult));
+               runOnUiThread(() -> tvDate.setText(finalDate));
            } catch (Exception e){
+               runOnUiThread(()-> tvResult.setText(R.string.status_error));
                runOnUiThread(()-> tvResult.setText(R.string.status_error));
            }
         }).start();
