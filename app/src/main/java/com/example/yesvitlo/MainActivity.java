@@ -1,7 +1,9 @@
 package com.example.yesvitlo;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnCheck;
     TextView tvResult, tvDate;
     String channelURL = "https://t.me/s/cek_info";
+    Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,39 +40,56 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        spinner = findViewById(R.id.spinner);
         btnCheck = findViewById(R.id.btnCheck);
         tvResult = findViewById(R.id.tvResult);
         tvDate = findViewById(R.id.tvDate);
 
-        btnCheck.setOnClickListener(v -> checkTg());
+        String[] group = {"Черга 1.1", "Черга 1.2","Черга 2.1", "Черга 2.2","Черга 3.1", "Черга 3.2","Черга 4.1", "Черга 4.2","Черга 5.1", "Черга 5.2","Черга 6.1", "Черга 6.2",};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, group);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        String selectedGroup = spinner.getSelectedItem().toString();
+
+
+        btnCheck.setOnClickListener(v -> checkTg(selectedGroup));
     }
 
-    private void checkTg(){
+    private void checkTg(String group){
         tvResult.setText(R.string.status_loading);
         new Thread(() -> {
            try{
                Document doc = Jsoup.connect(channelURL).userAgent("Mozilla/5.0").timeout(15000).get();
                Elements posts = doc.select(".tgme_widget_message");
-
-               String result = getString(R.string.status_not_found);
                String dateTime = "дату не знайдено";
+               String result = getString(R.string.status_not_found);
                if (!posts.isEmpty()){
-                   Element lastPost = posts.last();
-                   Element textElement = lastPost.selectFirst(".tgme_widget_message_text");
-                   Element timeElement = lastPost.selectFirst(".tgme_widget_message_date time");
-                   if (textElement != null){
-                       result = textElement.text();
-                   }else{
-                       result = getString(R.string.status_no_text);
-                   }if(timeElement != null){
-                       dateTime = timeElement.attr("datetime");
-                       SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US);
-                       Date date = inputFormat.parse(dateTime);
-                       SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault());
-                       dateTime = outputFormat.format(date);
-                   }else{
-                       dateTime = "Не вдалось отримати дату";
+                   for (int i = posts.size()-1; i>=0; i--){
+                       Element lastPost = posts.last();
+                       Element textElement = lastPost.selectFirst(".tgme_widget_message_text");
+                        if (textElement == null){
+                            continue;
+                        }
+                        String postText = textElement.text();
+                        if (postText.contains(group)){
+                            Element timeElement = lastPost.selectFirst(".tgme_widget_message_date time");
+                            if (textElement != null){
+                                result = textElement.text();
+                            }else{
+                                result = getString(R.string.status_no_text);
+                            }if(timeElement != null){
+                                dateTime = timeElement.attr("datetime");
+                                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.US);
+                                Date date = inputFormat.parse(dateTime);
+                                SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault());
+                                dateTime = outputFormat.format(date);
+                            }else{
+                                dateTime = "Не вдалось отримати дату";
+                            }
+                        }
                    }
+
+
 
                }
                String finalResult = result;

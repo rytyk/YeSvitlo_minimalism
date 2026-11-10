@@ -23,16 +23,15 @@
 
     <TextView
         android:id="@+id/tvResult"
-        android:layout_width="705dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="699dp"
+        android:layout_height="242dp"
         android:text="@string/tv_waiting"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
     <TextView
         android:id="@+id/tvDate"
@@ -41,4 +40,12 @@
         android:layout_marginEnd="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvResult" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="695dp"
+        android:layout_height="51dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>
